@@ -22,6 +22,58 @@ public class AVLTree {
   public boolean empty() {
     return (this.nodeCount == 0); // to be replaced by student code
   }
+  
+  //################################################################################################## custom functions
+  /**
+   * public String SearchNode(int k)
+   *
+   * Returns the last real node in the search for the node with key k.
+   * Returns null if the tree is empty
+   */
+  public IAVLNode SearchNode(int k) {
+	  if(empty()) return null;
+	  
+	  IAVLNode x=root;
+
+		  while(x.isRealNode()) {
+			  if(x.getKey()==k)
+				  return x;
+			  else if(k<x.getKey())
+				  x=x.getLeft();
+			  else
+				  x=x.getRight();
+		  }
+		  return x.getParent();
+  }
+  
+  /**
+   * public IAVLNode Successor(IAVLNode x)
+   *
+   * Returns the Successor of x
+   * Returns null if x is empty or x is max
+   */
+  public IAVLNode Successor(IAVLNode x) {
+	  if(x.isRealNode()==false) return null;
+	  
+	  IAVLNode temp;
+	  if(x.getRight().isRealNode()) {
+		  temp=x.getRight();
+		  while(temp.getLeft().isRealNode())
+			  temp=temp.getLeft();
+		  return temp;
+	  }
+	  else {
+		  temp=x.getParent();
+		  while(temp!=null&&x==temp.getRight()) {
+			  x=temp;
+			  temp=x.getParent();
+		  }
+		  return temp;
+	  }
+		  
+  }
+  
+//##################################################################################################
 
  /**
    * public String search(int k)
@@ -29,8 +81,13 @@ public class AVLTree {
    * Returns the info of an item with key k if it exists in the tree.
    * otherwise, returns null.
    */
-  public String search(int k) {
-	return "searchDefaultString";  // to be replaced by student code
+  public String search(int k) { //O(log(n))
+	//return "searchDefaultString";  // to be replaced by student code
+	  
+	  
+	 IAVLNode x=SearchNode(k);
+	 if(x.getKey()==k) return x.getValue();
+	 return null;
   }
 
   /**
@@ -42,7 +99,23 @@ public class AVLTree {
    * A promotion/rotation counts as one re-balance operation, double-rotation is counted as 2.
    * Returns -1 if an item with key k already exists in the tree.
    */
-   public int insert(int k, String i) {
+   public int insert(int k, String i) {//O(log(n)) #CURRENTLY DOES BASIC BTS, NOT AVL!!
+	  if(empty()) {
+		  this.root=new AVLNode(k,i);
+		  this.nodeCount++;
+		  return 0;
+	  }
+	  IAVLNode x=SearchNode(k);
+	  if(x.getKey()==k) return -1;
+	  
+	  nodeCount++;
+	  if(x.getKey()>k)
+		  x.setLeft(new AVLNode(k,i,x));
+	  
+	  if(x.getKey()<k)
+		  x.setRight(new AVLNode(k,i,x));
+	  
+	  
 	  return 420;	// to be replaced by student code
    }
 
@@ -55,8 +128,42 @@ public class AVLTree {
    * A promotion/rotation counts as one re-balance operation, double-rotation is counted as 2.
    * Returns -1 if an item with key k was not found in the tree.
    */
-   public int delete(int k) {
-	   return 421;	// to be replaced by student code
+   public int delete(int k) {//O(log(n)) #CURRENTLY DOES BASIC BTS, NOT AVL!!
+	   if(empty()) {
+			  return -1;
+		  }
+		  IAVLNode x=SearchNode(k);
+		  if(x.getKey()==k) {
+			  nodeCount--;
+			  
+			  IAVLNode p=x.getParent();
+			  IAVLNode replaceBy=new AVLNode();
+			  
+			  if(!x.getLeft().isRealNode()&&!x.getRight().isRealNode())
+				  replaceBy=new AVLNode();
+			  if(x.getLeft().isRealNode()&&x.getRight().isRealNode()) {
+				  replaceBy=Successor(x);
+				  if(replaceBy==null) replaceBy=new AVLNode();
+			  }
+			  if(x.getLeft().isRealNode() && !x.getRight().isRealNode())
+				  replaceBy=x.getLeft();
+
+			  if(!x.getLeft().isRealNode() && x.getRight().isRealNode())
+				  replaceBy=x.getRight();
+			  
+			  if(p.getLeft()==x) {
+				  p.setLeft(replaceBy);
+			  }
+			  if(p.getRight()==x) {
+				  p.setRight(replaceBy);
+			  }
+			  return 421;
+		  }
+		  
+		  return -1;
+		  
+		  
+		 // return 421;	// to be replaced by student code
    }
 
    /**
@@ -66,7 +173,13 @@ public class AVLTree {
     * or null if the tree is empty.
     */
    public String min() {
-	   return "minDefaultString"; // to be replaced by student code
+	   if(empty()) return null;
+	   
+	   IAVLNode temp=root;
+	   while(temp.getLeft().isRealNode())
+			  temp=temp.getLeft();
+	   return temp.getValue();
+	   //return "minDefaultString"; // to be replaced by student code
    }
 
    /**
@@ -76,7 +189,13 @@ public class AVLTree {
     * or null if the tree is empty.
     */
    public String max() {
-	   return "maxDefaultString"; // to be replaced by student code
+	   if(empty()) return null;
+	   
+	   IAVLNode temp=root;
+	   while(temp.getRight().isRealNode())
+			  temp=temp.getRight();
+	   return temp.getValue();
+	   //return "maxDefaultString"; // to be replaced by student code
    }
 
   /**
@@ -85,7 +204,7 @@ public class AVLTree {
    * Returns a sorted array which contains all keys in the tree,
    * or an empty array if the tree is empty.
    */
-  public int[] keysToArray() {
+  public int[] keysToArray() {	  	
         return new int[33]; // to be replaced by student code
   }
 
@@ -106,7 +225,8 @@ public class AVLTree {
     * Returns the number of nodes in the tree.
     */
    public int size() {
-	   return 422; // to be replaced by student code
+	   return nodeCount;
+	   //return 422; // to be replaced by student code
    }
    
    /**
@@ -115,7 +235,7 @@ public class AVLTree {
     * Returns the root AVL node, or null if the tree is empty
     */
    public IAVLNode getRoot() {
-	   return null;
+	   return root;
    }
    
    /**
@@ -179,7 +299,30 @@ public class AVLTree {
 	  private IAVLNode parent = null;
 	  private int height = -1;
 	  private int bf; 					// short for balance factor [(height of left child) - (height of right child)]
+	  	
+	  public AVLNode(int k,String i,IAVLNode l,IAVLNode r,IAVLNode p,int h) {
+	  		this.key=k;
+	  		this.info=i;
+	  		this.left=l;
+	  		this.right=r;
+	  		this.parent=p;
+	  		this.height=h;
+	  	}
 	  
+	  	public AVLNode() {
+	  		this(-1,null,null,null,null,-1);
+	  	}
+	  	public AVLNode(int k,String i) {
+	  		this(k,i,new AVLNode(),new AVLNode(),null,0);
+	  	}
+	  	public AVLNode(int k,String i,IAVLNode l,IAVLNode r,IAVLNode p) {
+	  		this(k,i,l,r,p,0);
+	  	}
+	  	public AVLNode(int k,String i,IAVLNode p) {
+	  		this(k,i,new AVLNode(),new AVLNode(),p,0);
+	  	}
+	  	
+	  	
 		public int getKey() {
 			return this.key; // to be replaced by student code
 		}
