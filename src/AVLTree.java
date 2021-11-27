@@ -143,7 +143,65 @@ public class AVLTree {
 				  replaceBy=new AVLNode();
 			  if(x.getLeft().isRealNode()&&x.getRight().isRealNode()) {
 				  replaceBy=Successor(x);
+				  
 				  if(replaceBy==null) replaceBy=new AVLNode();
+				  else {
+					  
+					  
+					  
+					  if(replaceBy.getParent().getLeft()==replaceBy) {
+						  replaceBy.getParent().setLeft(replaceBy.getRight());
+						  replaceBy.getRight().setParent(replaceBy.getParent());
+						  
+						  
+						  if(x==root) {
+							  replaceBy.setParent(null);
+							  root=(AVLTree.AVLNode) replaceBy;
+						  }
+						  else {
+							  if(p.getLeft()==x) {
+								  p.setLeft(replaceBy);
+								  replaceBy.setParent(p);
+							  }
+							  if(p.getRight()==x) {
+								  p.setRight(replaceBy);
+								  //replaceBy.setParent(p);
+							  }
+						  }
+						  
+						  
+						  replaceBy.setLeft(x.getLeft());
+						  //replaceBy.getLeft().setParent(replaceBy);
+						  
+						  replaceBy.setRight(x.getRight());
+						  //replaceBy.getRight().setParent(replaceBy);
+						  
+						  return 421;
+					  }
+					  if(replaceBy.getParent().getRight()==replaceBy) {		
+						  
+						  if(x==root) {
+							  replaceBy.setParent(null);
+							  root=(AVLTree.AVLNode) replaceBy;
+						  }
+						  else {
+							  if(p.getLeft()==x) {
+								  p.setLeft(replaceBy);
+								  //replaceBy.setParent(p);
+							  }
+							  if(p.getRight()==x) {
+								  p.setRight(replaceBy);
+								  //replaceBy.setParent(p);
+							  }
+						  }
+						  replaceBy.setLeft(x.getLeft());
+						  //replaceBy.getLeft().setParent(replaceBy);
+						  
+						  return 421;
+						  
+					  }
+					  
+				  }
 			  }
 			  if(x.getLeft().isRealNode() && !x.getRight().isRealNode())
 				  replaceBy=x.getLeft();
@@ -151,12 +209,21 @@ public class AVLTree {
 			  if(!x.getLeft().isRealNode() && x.getRight().isRealNode())
 				  replaceBy=x.getRight();
 			  
-			  if(p.getLeft()==x) {
-				  p.setLeft(replaceBy);
+			  if(x==root) {
+				  replaceBy.setParent(null);
+				  root=(AVLTree.AVLNode) replaceBy;
 			  }
-			  if(p.getRight()==x) {
-				  p.setRight(replaceBy);
+			  else {
+				  if(p.getLeft()==x) {
+					  p.setLeft(replaceBy);
+					  //replaceBy.setParent(p);
+				  }
+				  if(p.getRight()==x) {
+					  p.setRight(replaceBy);
+					  //replaceBy.setParent(p);
+				  }
 			  }
+			  
 			  return 421;
 		  }
 		  
@@ -204,8 +271,34 @@ public class AVLTree {
    * Returns a sorted array which contains all keys in the tree,
    * or an empty array if the tree is empty.
    */
-  public int[] keysToArray() {	  	
-        return new int[33]; // to be replaced by student code
+  public int[] keysToArray() {
+	  	int [] arr = new int[nodeCount];
+	  	int arr_indx=0;
+	  	IAVLNode [] stack = new IAVLNode[nodeCount];//later size=  root.getHeight()
+	  	int stackI = 0;
+	  	
+	  	if(empty())
+	  		return arr;
+	  	
+	  	IAVLNode temp=root;
+	  	do {
+	  		
+	  		while(temp.isRealNode()) {
+	  			stack[stackI++]=temp;
+	  			temp=temp.getLeft();
+	  		}
+	  		stackI--;
+	  		temp=stack[stackI];
+	  		arr[arr_indx++]=temp.getKey();
+	  		temp=temp.getRight();
+	  		
+	  	}while(stackI>0||temp.isRealNode());
+	  	
+	  	
+	  	
+	  	return arr;
+	  	
+        //return new int[33]; // to be replaced by student code
   }
 
   /**
@@ -216,7 +309,31 @@ public class AVLTree {
    * or an empty array if the tree is empty.
    */
   public String[] infoToArray() {
-        return new String[55]; // to be replaced by student code
+	  String [] arr = new String[nodeCount];
+	  	int arr_indx=0;
+	  	IAVLNode [] stack = new IAVLNode[nodeCount];//later size=  root.getHeight()
+	  	int stackI = 0;
+	  	
+	  	if(empty())
+	  		return arr;
+	  	
+	  	IAVLNode temp=root;
+	  	do {
+	  		
+	  		while(temp.isRealNode()) {
+	  			stack[stackI++]=temp;
+	  			temp=temp.getLeft();
+	  		}
+	  		stackI--;
+	  		temp=stack[stackI];
+	  		arr[arr_indx++]=temp.getValue();
+	  		temp=temp.getRight();
+	  		
+	  	}while(stackI>0||temp.isRealNode());
+	  	
+	  	
+	  	
+	  	return arr;
   }
 
    /**
@@ -307,6 +424,11 @@ public class AVLTree {
 	  		this.right=r;
 	  		this.parent=p;
 	  		this.height=h;
+	  		
+	  		if(k!=-1) {
+	  			this.left.setParent(this);
+	  			this.right.setParent(this);
+	  		}
 	  	}
 	  
 	  	public AVLNode() {
@@ -320,6 +442,7 @@ public class AVLTree {
 	  	}
 	  	public AVLNode(int k,String i,IAVLNode p) {
 	  		this(k,i,new AVLNode(),new AVLNode(),p,0);
+	  		
 	  	}
 	  	
 	  	
@@ -331,6 +454,7 @@ public class AVLTree {
 		}
 		public void setLeft(IAVLNode node) {
 			this.left = node;
+			node.setParent(this);
 			return; // to be replaced by student code
 		}
 		public IAVLNode getLeft() {
@@ -338,6 +462,7 @@ public class AVLTree {
 		}
 		public void setRight(IAVLNode node) {
 			this.right = node;
+			node.setParent(this);
 			return; // to be replaced by student code
 		}
 		public IAVLNode getRight() {
