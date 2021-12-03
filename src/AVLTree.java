@@ -10,7 +10,9 @@
 public class AVLTree {
 	
 	private int nodeCount = 0;
+	private int rotationCount=0;
 	AVLNode root;
+	
 	
 
   /**
@@ -73,6 +75,192 @@ public class AVLTree {
 		  
   }
   
+  public void updateHeightToRoot(IAVLNode x) {
+	  IAVLNode z;
+	  do {
+		  
+		  int bf=getBf(x);
+		  //System.out.print("bf = "+bf);
+		  if(bf==1||bf==-1) AVLNode.updateHeight(x);
+		  else {
+			  
+			  if(bf<=-2) {
+				  if(getBf(x.getLeft())==-1) {
+					  rotate(x.getLeft());
+				  }
+				  else if(getBf(x.getLeft())==1) {
+					  z=x.getLeft().getRight();
+					  rotate(z);rotate(z);
+				  }
+				  else if(x.getLeft().isRealNode()==false) {
+					  rotate(x.getRight());
+					  AVLNode.updateHeight(x);
+					  x=x.getParent();
+					  //System.out.print("!1"+x.getValue()+" "+nodeCount);
+				  }
+				  
+				  else if(getBf(x.getRight())==1) {
+					  rotate(x.getRight());
+				  }
+				  else if(getBf(x.getRight())==-1) {
+					  z=x.getRight().getLeft();
+					  rotate(z);rotate(z);
+				  }
+				  else if(x.getRight().isRealNode()==false) {
+					  rotate(x.getLeft());
+					  AVLNode.updateHeight(x);
+					  x=x.getParent();
+					 // System.out.print("!2"+x.getValue()+" "+nodeCount);
+				  }
+				  
+			  }
+			  
+			  if(bf>=2) {
+				  if(getBf(x.getRight())==1) {
+					  rotate(x.getRight());
+				  }
+				  else if(getBf(x.getRight())==-1) {
+					  z=x.getRight().getLeft();
+					  rotate(z);rotate(z);
+				  }
+				  else if(x.getRight().isRealNode()==false) {
+					  rotate(x.getLeft());
+					  AVLNode.updateHeight(x);
+					  x=x.getParent();
+					 // System.out.print("!2"+x.getValue()+" "+nodeCount);
+				  }
+				  
+				  else if(getBf(x.getLeft())==-1) {
+					  rotate(x.getLeft());
+				  }
+				  else if(getBf(x.getLeft())==1) {
+					  z=x.getLeft().getRight();
+					  rotate(z);rotate(z);
+				  }
+				  else if(x.getLeft().isRealNode()==false) {
+					  rotate(x.getRight());
+					  AVLNode.updateHeight(x);
+					  x=x.getParent();
+					  //System.out.print("!1"+x.getValue()+" "+nodeCount);
+				  }
+				  
+			  }
+		  }
+		  AVLNode.updateHeight(x);
+		  //int bf = AVLNode.updateHeight(x);
+		  x=x.getParent();
+	  }while(x!=null);
+	  if(x==root) AVLNode.updateHeight(x); 
+	  
+  }
+  
+  /*public void updateHeightToRootDelete(IAVLNode replaceBy) {
+	  IAVLNode x=replaceBy;
+	  //AVLNode.updateHeight(x);
+	  IAVLNode z;
+	  do {
+		  
+		  int bf=getBf(x);
+		  //System.out.print("bf = "+bf);
+		  if(bf==1||bf==-1) AVLNode.updateHeight(x);
+		  else {
+			  
+			  if(bf<=-2) {
+				  if(getBf(x.getLeft())==-1) {
+					  rotate(x.getLeft());
+				  }
+				  else if(getBf(x.getLeft())==1) {
+					  z=x.getLeft().getRight();
+					  rotate(z);rotate(z);
+				  }
+				  else if(x.getLeft().isRealNode()==false) {
+					  rotate(x.getRight());
+					  AVLNode.updateHeight(x);
+					  x=x.getParent();
+					  //System.out.print("!1"+x.getValue()+" "+nodeCount);
+				  }
+				  
+				  else if(getBf(x.getRight())==1) {
+					  rotate(x.getRight());
+				  }
+				  else if(getBf(x.getRight())==-1) {
+					  z=x.getRight().getLeft();
+					  rotate(z);rotate(z);
+				  }
+				  else if(x.getRight().isRealNode()==false) {
+					  rotate(x.getLeft());
+					  AVLNode.updateHeight(x);
+					  x=x.getParent();
+					 // System.out.print("!2"+x.getValue()+" "+nodeCount);
+				  }
+				  
+			  }
+			  
+			  if(bf>=2) {
+				  if(getBf(x.getRight())==1) {
+					  rotate(x.getRight());
+				  }
+				  else if(getBf(x.getRight())==-1) {
+					  z=x.getRight().getLeft();
+					  rotate(z);rotate(z);
+				  }
+				  else if(x.getRight().isRealNode()==false) {
+					  rotate(x.getLeft());
+					  AVLNode.updateHeight(x);
+					  x=x.getParent();
+					 // System.out.print("!2"+x.getValue()+" "+nodeCount);
+				  }
+				  
+				  else if(getBf(x.getLeft())==-1) {
+					  rotate(x.getLeft());
+				  }
+				  else if(getBf(x.getLeft())==1) {
+					  z=x.getLeft().getRight();
+					  rotate(z);rotate(z);
+				  }
+				  else if(x.getLeft().isRealNode()==false) {
+					  rotate(x.getRight());
+					  AVLNode.updateHeight(x);
+					  x=x.getParent();
+					  //System.out.print("!1"+x.getValue()+" "+nodeCount);
+				  }
+				  
+			  }
+		  }
+		  AVLNode.updateHeight(x);
+		  //int bf = AVLNode.updateHeight(x);
+		  x=x.getParent();
+	  }while(x!=null);
+	  if(x==root) AVLNode.updateHeight(x); 
+	  
+  }*/
+  
+  public void rotate(IAVLNode x) {
+	  if(x==root) return;
+	  rotationCount++;
+	  IAVLNode p =x.getParent();
+	  IAVLNode grandFather=p.getParent();
+	  if(p.getRight()==x) {//rotating left
+		  p.setRight(x.getLeft());
+		  x.setLeft(p); 
+	  }
+	  else {//rotating right
+		  p.setLeft(x.getRight());
+		  x.setRight(p);  
+	  }
+	  x.setParent(grandFather);
+	  if(grandFather!=null) {
+		  if(grandFather.getKey()>x.getKey()) grandFather.setLeft(x);
+		  else grandFather.setRight(x);
+	  }
+	  
+	  if(p==root) root=(AVLTree.AVLNode) x;
+  }
+  public static int getBf(IAVLNode x) {
+	  if(!x.isRealNode()) return 0;
+  	return -(x.getLeft().getHeight()-x.getRight().getHeight());
+  }
+  
 //##################################################################################################
 
  /**
@@ -99,7 +287,8 @@ public class AVLTree {
    * A promotion/rotation counts as one re-balance operation, double-rotation is counted as 2.
    * Returns -1 if an item with key k already exists in the tree.
    */
-   public int insert(int k, String i) {//O(log(n)) #CURRENTLY DOES BASIC BTS, NOT AVL!!
+   public int insert(int k, String i) {//O(log(n))
+	   rotationCount=0;
 	  if(empty()) {
 		  this.root=new AVLNode(k,i);
 		  this.nodeCount++;
@@ -109,14 +298,16 @@ public class AVLTree {
 	  if(x.getKey()==k) return -1;
 	  
 	  nodeCount++;
+	  
+	  AVLNode NodeToAdd=new AVLNode(k,i,x);
 	  if(x.getKey()>k)
-		  x.setLeft(new AVLNode(k,i,x));
+		  x.setLeft(NodeToAdd);
 	  
 	  if(x.getKey()<k)
-		  x.setRight(new AVLNode(k,i,x));
+		  x.setRight(NodeToAdd);
 	  
-	  
-	  return 420;	// to be replaced by student code
+	  updateHeightToRoot(NodeToAdd);
+	  return rotationCount;	// to be replaced by student code
    }
 
   /**
@@ -128,7 +319,8 @@ public class AVLTree {
    * A promotion/rotation counts as one re-balance operation, double-rotation is counted as 2.
    * Returns -1 if an item with key k was not found in the tree.
    */
-   public int delete(int k) {//O(log(n)) #CURRENTLY DOES BASIC BTS, NOT AVL!!
+   public int delete(int k) {//O(log(n))
+	   rotationCount=0;
 	   if(empty()) {
 			  return -1;
 		  }
@@ -138,21 +330,24 @@ public class AVLTree {
 			  
 			  IAVLNode p=x.getParent();
 			  IAVLNode replaceBy=new AVLNode();
-			  
+			  IAVLNode UpdateH;
 			  if(!x.getLeft().isRealNode()&&!x.getRight().isRealNode())
 				  replaceBy=new AVLNode();
 			  if(x.getLeft().isRealNode()&&x.getRight().isRealNode()) {
 				  replaceBy=Successor(x);
-				  
-				  if(replaceBy==null) replaceBy=new AVLNode();
+				  UpdateH=replaceBy;
+				  if(replaceBy==null) {
+					  replaceBy=new AVLNode();
+					  UpdateH=replaceBy;
+				  }
 				  else {
 					  
 					  
 					  
 					  if(replaceBy.getParent().getLeft()==replaceBy) {
 						  replaceBy.getParent().setLeft(replaceBy.getRight());
-						  replaceBy.getRight().setParent(replaceBy.getParent());
-						  
+						  //replaceBy.getRight().setParent(replaceBy.getParent());
+						  UpdateH = replaceBy.getRight();
 						  
 						  if(x==root) {
 							  replaceBy.setParent(null);
@@ -161,7 +356,7 @@ public class AVLTree {
 						  else {
 							  if(p.getLeft()==x) {
 								  p.setLeft(replaceBy);
-								  replaceBy.setParent(p);
+								  //replaceBy.setParent(p);
 							  }
 							  if(p.getRight()==x) {
 								  p.setRight(replaceBy);
@@ -176,6 +371,8 @@ public class AVLTree {
 						  replaceBy.setRight(x.getRight());
 						  //replaceBy.getRight().setParent(replaceBy);
 						  
+						  
+						  updateHeightToRoot(UpdateH);
 						  return 421;
 					  }
 					  if(replaceBy.getParent().getRight()==replaceBy) {		
@@ -197,7 +394,8 @@ public class AVLTree {
 						  replaceBy.setLeft(x.getLeft());
 						  //replaceBy.getLeft().setParent(replaceBy);
 						  
-						  return 421;
+						  updateHeightToRoot(replaceBy);
+						  return rotationCount;
 						  
 					  }
 					  
@@ -224,7 +422,8 @@ public class AVLTree {
 				  }
 			  }
 			  
-			  return 421;
+			  updateHeightToRoot(replaceBy);
+			  return rotationCount;
 		  }
 		  
 		  return -1;
@@ -274,7 +473,7 @@ public class AVLTree {
   public int[] keysToArray() {
 	  	int [] arr = new int[nodeCount];
 	  	int arr_indx=0;
-	  	IAVLNode [] stack = new IAVLNode[nodeCount];//later size=  root.getHeight()
+	  	IAVLNode [] stack = new IAVLNode[root.getHeight()+1];//later size=  root.getHeight()
 	  	int stackI = 0;
 	  	
 	  	if(empty())
@@ -311,7 +510,7 @@ public class AVLTree {
   public String[] infoToArray() {
 	  String [] arr = new String[nodeCount];
 	  	int arr_indx=0;
-	  	IAVLNode [] stack = new IAVLNode[nodeCount];//later size=  root.getHeight()
+	  	IAVLNode [] stack = new IAVLNode[root.getHeight()+1];//later size=  root.getHeight()
 	  	int stackI = 0;
 	  	
 	  	if(empty())
@@ -454,6 +653,7 @@ public class AVLTree {
 		}
 		public void setLeft(IAVLNode node) {
 			this.left = node;
+			updateHeight(this);
 			node.setParent(this);
 			return; // to be replaced by student code
 		}
@@ -462,6 +662,7 @@ public class AVLTree {
 		}
 		public void setRight(IAVLNode node) {
 			this.right = node;
+			updateHeight(this);
 			node.setParent(this);
 			return; // to be replaced by student code
 		}
@@ -470,6 +671,7 @@ public class AVLTree {
 		}
 		public void setParent(IAVLNode node) {
 			this.parent = node;
+			updateHeight(this);
 			return; // to be replaced by student code
 		}
 		public IAVLNode getParent() {
@@ -484,6 +686,24 @@ public class AVLTree {
 	    }
 	    public int getHeight() {
 	      return this.height; // to be replaced by student code
+	    }
+	    
+	    public static int updateHeight(IAVLNode x) {
+	    	int lh,rh;
+	    	
+	    	if(x.getLeft()==null) lh=-10;
+	    	else lh=x.getLeft().getHeight();
+	    	
+	    	if(x.getRight()==null) rh=-10;
+	    	else rh=x.getRight().getHeight();
+	    	
+	    	if(lh>rh)
+	    		x.setHeight(1+lh);
+	    	else
+	    		x.setHeight(1+rh);
+	    	if(x.getHeight()<0&&x.getKey()>0) x.setHeight(0);
+	    	if(x.getHeight()<0&&x.getKey()<0) x.setHeight(-1);
+	    	return getBf(x);
 	    }
   }
 
