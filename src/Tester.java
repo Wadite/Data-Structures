@@ -4,7 +4,44 @@ public class Tester {
 
 	public static void main(String [] args) {
 		AVLTree tree=new AVLTree();
+		//System.out.println(tree.size());
+		AVLTree t=new AVLTree();
+		
+		tree.insert(1,"s1");tree.insert(2,"s2");//
+		//System.out.println(tree.size());
+		
+		AVLTree.IAVLNode x=tree.new AVLNode(3,"s3");
+		
+		t.insert(6,"s6");t.insert(7,"s7");t.insert(8,"s8");t.insert(5,"s5");t.insert(4,"s4");
+		
+		//treePrinter(tree);
+		//treePrinter(t);
+		
+		tree.join(x,t);
+		treePrinter(tree);
+		//System.out.println(tree.size());
+		tree.search(5);
+		System.out.println("ok");
+		AVLTree [] arr=tree.split(2);
+		
+		treePrinter(arr[0]);
+		System.out.println();
+		System.out.println();
+		treePrinter(arr[1]);
+		
+		
 		/*
+		tree.delete(1);
+		treePrinter(tree);
+		System.out.println(tree.Successor(tree.SearchNode(2)).getValue());
+		tree.delete(2);
+		treePrinter(tree);
+		tree.delete(3);tree.delete(4);
+		tree.delete(5);tree.delete(6);tree.delete(7);tree.delete(8);
+		System.out.println(tree.empty());
+		treePrinter(tree);
+		//tree.insert(4,"s4");tree.insert(2,"s2");tree.insert(1,"s1");tree.insert(3,"s3");
+		
 		System.out.println(tree.empty());
 		tree.insert(4,"hi");
 		System.out.println(tree.empty());
@@ -45,7 +82,7 @@ public class Tester {
 		
 		System.out.println(tree.min());
 		System.out.println(tree.max());
-		*/
+		
 		tree.insert(13,"s13");
 		tree.insert(5,"s5");
 		tree.insert(2,"s2");
@@ -68,7 +105,12 @@ public class Tester {
 		tree.delete(1);
 		
 		treePrinter(tree);
+		*/
+		
+		
+		
 		System.out.println("Ended");
+		
 		
 		
 	}
@@ -94,6 +136,7 @@ public class Tester {
 		// V - virtual node
 		//N - null
 		public static void treePrinter(AVLTree tree){
+			if(tree.empty()) {System.out.println("N"); return;}
 			ArrayList<AVLTree.IAVLNode> currList = new ArrayList<>();
 			currList.add(tree.getRoot());
 			int level = tree.getRoot().getHeight();
