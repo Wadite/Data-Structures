@@ -1,7 +1,7 @@
 Student 1:
-ID:
-Name:
-User:
+ID: 326128006
+Name: Elior Segal
+User: eliorsegal
 
 Student 2:
 ID: 205836810
