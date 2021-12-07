@@ -6,6 +6,9 @@
  * An implementation of an AVL Tree with
  * distinct integer keys and info.
  *
+ * Student 1: Elior Segal, 326128006, eliorsegal
+ * Student 2: Roee Kishon, 205836810, roeekishon
+ *
  */
 
 public class AVLTree {
