@@ -12,10 +12,10 @@
 
 public class AVLTreeForExp extends AVLTree{
 	public int searchCost=0;
-	public int joinsCostInsplits=0;
-	public int maxJoinCost=0;
-	public int splitsCnt=0;
-	private IAVLNode maxNode;
+	public static int joinsCostInsplits;
+	public static int maxJoinCost;
+	public static int joinsCnt;
+	public IAVLNode maxNode;
 	
   //################################################################################################## custom functions
   /**
@@ -26,22 +26,8 @@ public class AVLTreeForExp extends AVLTree{
    */
 	@Override
   public IAVLNode SearchNode(int k) { //(O(log(n))
-	  return fingerSearchNode(k);
-	  /*
-	  if(empty()) return null;  //empty then surely no node has key k
-	  
-	  IAVLNode x=root;
-
-		  while(x.isRealNode()) { //while we can keep searching
-			  if(x.getKey()==k) // found
-				  return x;
-			  else if(k<x.getKey()) //if exist then on the left side
-				  x=x.getLeft();
-			  else					//if exist then on the right side
-				  x=x.getRight();
-		  }
-		  return x.getParent();		//the last real node
-		  */
+		return super.SearchNode(k);
+	  //return fingerSearchNode(k); //for exp1
   }
   /**
    * public String SearchNode(int k)
@@ -98,7 +84,7 @@ public class AVLTreeForExp extends AVLTree{
 	   
 	  if(empty()) {	//just update the root
 		  this.root=new AVLNode(k,i);
-		  if(this.maxNode==null||k>this.maxNode.getKey()) maxNode=root;
+		  maxNode=root;
 		  return 0;
 	  }
 	  IAVLNode x=SearchNode(k);	//find node closets to the place of k
@@ -118,17 +104,57 @@ public class AVLTreeForExp extends AVLTree{
 	  return rotationCount;
    }
   @Override
-  public AVLTree[] split(int x) {
-	  splitsCnt++;
-	  return super.split(x);
+  public AVLTreeForExp[] split(int x) {
+	  IAVLNode n = SearchNode(x);
+	   IAVLNode p=n.getParent();
+	   
+	   AVLTreeForExp t1=new AVLTreeForExp();
+	   if(n.getLeft().isRealNode()) {	//init t1 to be the left sub tree of n
+		   t1.root=n.getLeft();
+		   t1.root.setParent(null);
+	   }
+	   AVLTreeForExp t2=new AVLTreeForExp();
+	   if(n.getRight().isRealNode()) {	//init t2 to be the right sub tree of n
+		   t2.root=n.getRight();
+		   t2.root.setParent(null);
+	   }
+	   
+	   while(n!=root) {	//until we have not reach the root
+		   p=n.getParent();
+		   
+		   if(p.getRight()==n) {	//p<n => add p to t1 and its left sub tree
+			   AVLTreeForExp temp=new AVLTreeForExp();
+			   if(p.getLeft().isRealNode()) {
+				   temp.root=p.getLeft();
+				   temp.root.setParent(null);
+			   }
+			   IAVLNode p2=new AVLNode(p.getKey(),p.getValue());
+			   t1.join(p2, temp);
+		   }
+		   else {	//p>n => add p to t2 and its right sub tree
+			   AVLTreeForExp temp=new AVLTreeForExp();
+			   if(p.getRight().isRealNode()) {
+				   temp.root=p.getRight();
+				   temp.root.setParent(null);
+			   }
+			   IAVLNode p2=new AVLNode(p.getKey(),p.getValue());
+			   t2.join(p2, temp);
+		   }
+		   
+		   n=n.getParent();	//go upwards
+	   }
+	   
+	   
+	   return new AVLTreeForExp[] {t1,t2};
   }
   @Override
   public int join(IAVLNode x, AVLTree t) {
+	  joinsCnt++;
 	  int c=super.join(x, t);
-	  joinsCostInsplits+=c;
-	  if(c>maxJoinCost)
-		  maxJoinCost=c;
-	  return c;
+	   joinsCostInsplits+=c;
+		  if(c>maxJoinCost)
+			  maxJoinCost=c;
+		  return c;
 	  
   }
   

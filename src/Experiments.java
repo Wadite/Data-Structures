@@ -43,6 +43,7 @@ public class Experiments {
 			randomOrder(randomOrder);
 			
 			AVLTreeForExp tree=new AVLTreeForExp();
+			AVLTreeForExp.joinsCostInsplits=0;AVLTreeForExp.maxJoinCost=0;AVLTreeForExp.joinsCnt=0;
 			for(int a:randomOrder)
 				tree.insert(a, "s"+a);
 			
@@ -50,15 +51,16 @@ public class Experiments {
 			tree.split(randomKey);
 			
 			
-			System.out.println("avrage joins cost in random: "+tree.joinsCostInsplits/tree.splitsCnt);
+			System.out.println("average joins cost in random: "+tree.joinsCostInsplits/tree.joinsCnt);
 			System.out.println("max join cost in random: "+tree.maxJoinCost);
 			
 			AVLTreeForExp tree2=new AVLTreeForExp();
+			AVLTreeForExp.joinsCostInsplits=0;AVLTreeForExp.maxJoinCost=0;AVLTreeForExp.joinsCnt=0;
 			for(int a:randomOrder)
 				tree2.insert(a, "s"+a);
 			tree2.split(tree2.maxLeftSideTree());
 			
-			System.out.println("avrage joins cost in left max: "+tree2.joinsCostInsplits/tree2.splitsCnt);
+			System.out.println("average joins cost in left max: "+tree2.joinsCostInsplits/tree2.joinsCnt);
 			System.out.println("max join cost in left max: "+tree2.maxJoinCost);
 			
 			
