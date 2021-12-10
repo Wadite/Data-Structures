@@ -13,7 +13,7 @@
 
 public class AVLTree {
 	
-	private int rotationCount=0; //count rotations in insertion and deletion
+	protected int rotationCount=0; //count rotations in insertion and deletion
 	IAVLNode root; //the root of the tree
 	
 	
