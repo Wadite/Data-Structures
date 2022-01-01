@@ -12,6 +12,8 @@ public class FibonacciHeap
 	HeapNode first=null;
 	HeapNode min=null;
 	
+	HeapNode last=null;
+	
 	int nodeCount=0;
 	
 	int markedNodes = 0; 
@@ -53,6 +55,7 @@ public class FibonacciHeap
 		
 		first=null;
 		min=null;
+		last=null;
 		for(int i=arr.length-1;i>=0;i--) {
 			
 			if(arr[i]!=null) {
@@ -62,6 +65,8 @@ public class FibonacciHeap
 				//arr[i].setOrder(i);
 				arr[i].setParent(null);
 				first=arr[i];
+				
+				if(last==null) last=arr[i];
 			}
 		}
 		
@@ -78,7 +83,7 @@ public class FibonacciHeap
 	    */
 	public void consolidating(HeapNode [] arr,HeapNode node) {
 		int ord;
-		for(ord=node.getOrder();arr[ord]!=null;ord++) {
+		for(ord=node.getOrder();arr[ord]!=null;ord++) { //as long as there already a tree in the current spot we will link them
 			
 			HeapNode other=arr[ord];
 			
@@ -102,7 +107,7 @@ public class FibonacciHeap
 	}
 	
 	
-	public void cut(HeapNode x) {
+	public void cut(HeapNode x) { //cutting all the needed pointers from the current node
 		totalCuts++;
 		
 		HeapNode y=x.getParent(); //y!=null
@@ -185,7 +190,10 @@ public class FibonacciHeap
     public HeapNode insert(int key)
     {    
     	HeapNode newNode = new HeapNode(key);
-    	if(isEmpty()||key<min.getKey()) min=newNode;
+    	if(isEmpty()||key<min.getKey()) {
+    		min=newNode;
+    		last=newNode;
+    	}
     	
     	nodeCount++;
     	
@@ -287,13 +295,10 @@ public class FibonacciHeap
     	
     	if(heap2.min.key<this.min.key) this.min=heap2.min;
     	
-    	HeapNode temp=first;
     	
-    	while(temp.next!=null) {
-    		temp=temp.getNext();
-    	}
+    	last.setNext(heap2.first);
     	
-    	temp.setNext(heap2.first);
+    	this.last=heap2.last;
     }
 
    /**
@@ -368,23 +373,6 @@ public class FibonacciHeap
     	if(x.getParent()!=null) {
     		if(x.getKey()<x.getParent().getKey()) {
     			cascading_cut(x);
-    		
-    		
-    		/*if(x.getNext()!=null ) {
-	    			if(x.getPrev()!=null)
-	    				x.getPrev().setNext(x.getNext());
-	    			else
-	    				x.getNext().setPrev(null);
-	    		}
-	    	
-    		
-    		if(x.getPrev()!=null)
-				x.getPrev().setNext(x.getNext());
-    		
-    		x.setNext(this.first);
-    		x.setPrev(null);
-	    	this.first=x;
-	    	*/
 	    	
     		}
     		
@@ -414,7 +402,7 @@ public class FibonacciHeap
     		treesNum++;
     	}
     	
-    	return treesNum+2*markedNodes; // should be replaced by student code
+    	return treesNum+2*markedNodes;
     }
 
    /**
